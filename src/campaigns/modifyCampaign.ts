@@ -1,6 +1,6 @@
-import {BaseURL} from "../defaults";
+import { BaseURL } from "../defaults";
 
-const campaignEndpoint = (orgid:string) => `${BaseURL}${orgid}/campaigns`;
+const campaignEndpoint = (orgid: string) => `${BaseURL}${orgid}/campaigns`;
 
 const appKey = process.env.APP_API_TOKEN;
 const userKey = process.env.USER_API_KEY;
@@ -11,19 +11,18 @@ const headers = {
     "Content-Type": "application/json",
 } as const;
 
-async function createCampaign(campaignData: Campaign,orgid:string): Promise<Campaign> {
+async function createDraftCampaign(orgid: string): Promise<{campaigns:Array<Campaign>}> {
     const response = await fetch(`${campaignEndpoint(orgid)}`, {
         method: 'POST',
         headers,
-        body: JSON.stringify(campaignData),
     });
     if (!response.ok) {
-        throw new Error('Failed to create campaign');
+        throw new Error('Failed to create campaign', { cause: await response.text() });
     }
     return response.json();
 }
 
-async function getCampaignById(campaignId: number,orgid:string): Promise<Campaign | null> {
+async function getCampaignById(campaignId: number, orgid: string): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: "GET",
         headers
@@ -32,27 +31,41 @@ async function getCampaignById(campaignId: number,orgid:string): Promise<Campaig
         return null;
     }
     if (!response.ok) {
-        throw new Error('Failed to retrieve campaign');
+        throw new Error('Failed to retrieve campaign', { cause: await response.text() });
     }
     return response.json();
 }
 
-async function updateCampaign(campaignId: number, campaignData: Campaign,orgid:string): Promise<Campaign | null> {
+async function updateCampaign(campaignId: number, campaignData: CampaignRequest, orgid: string): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'PUT',
         headers: headers,
-        body: JSON.stringify(campaignData),
+        body: JSON.stringify({campaign:campaignData}),
     });
     if (response.status === 404) {
         return null;
     }
     if (!response.ok) {
-        throw new Error('Failed to update campaign');
+        console.log(await response.text())
+        throw new Error('Failed to update campaign', { cause: await response.text()});
     }
     return response.json();
 }
 
-async function deleteCampaign(campaignId: number,orgid:string): Promise<boolean> {
+async function createCampaign(campaignData: CampaignRequest,orgid: string): Promise<Campaign> {
+    const {campaigns} = await createDraftCampaign(orgid);
+    
+    const updates = await updateCampaign(campaigns[0].id!,campaignData,orgid);
+
+    if(!updates){
+        throw new Error('Failed to create campaign')
+    }
+
+    return updates
+    
+}
+
+async function deleteCampaign(campaignId: number, orgid: string): Promise<boolean> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'DELETE',
         headers
@@ -61,21 +74,21 @@ async function deleteCampaign(campaignId: number,orgid:string): Promise<boolean>
         return false;
     }
     if (!response.ok) {
-        throw new Error('Failed to delete campaign');
+        throw new Error('Failed to delete campaign', { cause: await response.text() });
     }
     return true;
 }
 
-async function listCampaigns(orgid:string): Promise<Campaign[]> {
-    const response = await fetch(`${campaignEndpoint(orgid)}`, { 
-        method:"GET"
-        ,headers 
+async function listCampaigns(orgid: string): Promise<Campaign[]> {
+    const response = await fetch(`${campaignEndpoint(orgid)}`, {
+        method: "GET",
+        headers
     });
     if (!response.ok) {
-        throw new Error('Failed to retrieve campaign list');
+        throw new Error('Failed to retrieve campaign list', { cause: await response.text() });
     }
     return response.json();
 }
 
 
-export {listCampaigns};
+export { listCampaigns, deleteCampaign, updateCampaign, getCampaignById, createCampaign };

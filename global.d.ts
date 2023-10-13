@@ -5,6 +5,7 @@ declare module "bun" {
     }
 }
 
+
 declare global {
 
     type Coordinates = number[][];
@@ -19,19 +20,19 @@ declare global {
         /** The end date of the campaign. */
         end_date: string;
         /** The ID of the bid type. */
-        bid_type_id: number;
+        bid_type_id?: number;
         /** The bid amount. */
-        bid: number;
+        bid?: number;
         /** The daily budget for the campaign. */
-        daily_budget: number;
+        daily_budget?: number;
         /** The total budget for the campaign. */
-        total_budget: number;
+        total_budget?: number;
         /** The impression cap for the campaign. */
-        impression_cap: number;
+        impression_cap?: number;
         /** The pacing value. */
-        pacing: number;
+        pacing?: number;
         /** Indicates if automated pacing is enabled. */
-        automated_pacing_enabled: boolean;
+        automated_pacing_enabled?: boolean;
         /** The viewability setting (optional). */
         viewability?: "Good" | "Better" | "Best" | null;
         /** Frequency capping settings (optional). */
@@ -42,21 +43,21 @@ declare global {
             hours: number;
         };
         /** The OBA provider ID. */
-        oba_provider_id: number;
+        oba_provider_id?: number;
         /** The media type ID. */
-        media_type_id: number;
+        media_type_id?: number;
         /** Segment match type (optional). */
         segment_match_type?: "all" | "any";
         /** Indicates if auto optimization is enabled. */
-        auto_optimize: boolean;
+        auto_optimize?: boolean;
         /** Click attribution window. */
-        click_attribution_window: number;
+        click_attribution_window?: number;
         /** View attribution window. */
-        view_attribution_window: number;
+        view_attribution_window?: number;
         /** Indicates if organization blocklist opt-out is enabled. */
-        org_blocklist_opt_out: boolean;
+        org_blocklist_opt_out?: boolean;
         /** The ID of the ad placement. */
-        ad_placement_id: number;
+        ad_placement_id?: number;
         /** Week dayparting settings (optional). */
         week_dayparting?: number[][];
         /** Postal code settings (optional). */
@@ -88,9 +89,11 @@ declare global {
      */
     type Campaign = {
         /** Campaign ID */
-        campaign_id?: number;
+        id?: number;
         /** Campaign name */
-        campaign_name: string;
+        name: string;
+        /**Campaign Status */
+        status: "Draft" | "Pending" | "Active" | "Paused" | "Ended" | "Suspended";
         /** Start date for the campaign */
         start_date: string;
         /** End date for the campaign */
@@ -100,9 +103,9 @@ declare global {
         /** Campaign type (1: Search, 2: Contextual, 3: Site Retargeting, 4: IP Targeting, 5: Geo Optimized) */
         campaign_type_id: 1 | 2 | 3 | 4 | 5;
         /** List of targeting options for the campaign */
-        targeting_options: string[];
+        targeting_options?: string[];
         /** Bid strategy for the campaign */
-        bid_strategy: string;
+        bid_strategy?: string;
         /** Daily budget for the campaign */
         daily_budget?: number;
         /** Ad schedule for the campaign */
