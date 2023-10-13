@@ -1,0 +1,1 @@
+export const BaseURL = `https://app.simpli.fi/api/organizations/` as const;
