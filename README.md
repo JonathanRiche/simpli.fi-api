@@ -53,3 +53,5 @@ createCampaign(
 )
 
 ```
+
+If you'd like to clone the repo to contribute or develop locally we used [bun](https://bun.sh/) for local development/debugging everything should be compatible with node as well we only use bun.utils/testing outside of the main package.

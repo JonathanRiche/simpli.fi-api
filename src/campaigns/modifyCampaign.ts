@@ -2,14 +2,19 @@ import { BaseURL } from "../defaults";
 
 const campaignEndpoint = (orgid: string) => `${BaseURL}${orgid}/campaigns`;
 
+
+//?add to a class or object that inherits via a config method
 const appKey = process.env.APP_API_TOKEN;
 const userKey = process.env.USER_API_KEY;
 
+//?add to a class or object that inherits via a config method
 const headers = {
     "X-App-Key": appKey,
     "X-User-Key": userKey,
     "Content-Type": "application/json",
 } as const;
+
+//?apply all functions as methods in a class
 
 async function createDraftCampaign(orgid: string): Promise<{campaigns:Array<Campaign>}> {
     const response = await fetch(`${campaignEndpoint(orgid)}`, {
