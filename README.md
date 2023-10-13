@@ -1,10 +1,18 @@
-# simplfi
+# simpli.fi api
 
 Typescript package for use with the Simpli.fi REST API. [Simpli.fi](https://simpli.fi/)
 
 This package was updated with the latest version "2021-04-16" from their [API docs](https://app.simpli.fi/apidocs)
 
 View [global.d.ts](https://github.com/JonathanRiche/simpli.fi-api/blob/5f26349501f6fafde7b0736b07731ad8ab877162/global.d.ts) for types
+
+## Getting Started
+Create a .env file based on the .env.dev secrets and add the correct tokens found in simpli.fi user & admin area.
+```s
+APP_API_TOKEN="REPLACE_WITH_YOUR_APP_APITOKEN"
+USER_API_KEY="REPLACE_WITH_YOUR_USER_APITOKEN"
+```
+
 
 Example of campaign type.
 ```typescript
