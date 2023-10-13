@@ -39,8 +39,7 @@ createCampaign(
         budget: 100,
         campaign_type_id: 1,
         start_date: "2023-10-13",
-        end_date: "2023-12-30",
-        status: string,
+        end_date: "2023-12-30"
     },
     organizationId
 )
