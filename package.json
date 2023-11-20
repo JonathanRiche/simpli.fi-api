@@ -3,12 +3,16 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev":"bun ./index.ts"
+    "dev": "bun ./index.ts"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.10",
     "bun-types": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1"
   }
 }

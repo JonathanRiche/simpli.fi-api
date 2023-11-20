@@ -8,6 +8,55 @@ declare module "bun" {
 
 declare global {
 
+    type Ad = {
+        resource: string;
+        id: number;
+        name: string;
+        status: 'Active' | 'Paused' | 'Deleted'; // Possible statuses
+        pacing: number;
+        creative_group_id: number | null;
+        click_tag_verified: boolean | null;
+        preview_tag: string;
+        target_url: string;
+        primary_creative: string;
+        primary_creative_url: string;
+        dynamic_ad_feed_id: number | null;
+        feed_filter_id: number | null;
+        extra_html: string | null;
+        actions: {
+          pause: {
+            href: string;
+            method: 'POST';
+          };
+          verify_click_tag: {
+            href: string;
+            method: 'POST';
+          };
+        }[];
+        resources: {
+          ad_file_types: string;
+        }[];
+      }
+
+    type Budget_Plan = {
+        id: number,
+        start_date: string,
+        end_date: string,
+        total_budget: number,
+        adjusted_budget: number,
+        spent_budget: number,
+        available_rollover: boolean,
+        resource: string
+    }
+
+    type Budget_Plan_Request = {
+            start_date?: string,
+            end_date?: string,
+            total_budget?: number,
+            total_impressions?: number
+          
+    }
+
     type Coordinates = number[][];
 
     type CampaignRequest = {
