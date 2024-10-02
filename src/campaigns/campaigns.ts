@@ -128,8 +128,8 @@ async function updateCampaign(campaignId: number, campaignData: Partial<Campaign
         const responseText = await response.text();
         throw new Error('Failed to update campaign', { cause: responseText });
     }
-    const data = await response.json();
-    return data.campaigns[0];
+    const data = await response.json() as unknown as Promise<Campaign>;
+    return data;
 }
 
 async function createCampaign(campaignData: CampaignRequest, orgid: string, debug?: boolean): Promise<{ campaign: Campaign, success: boolean }> {
@@ -172,7 +172,8 @@ async function getCampaignBudgetPlan(campaignId: number, debug?: boolean): Promi
         const responseText = await response.text();
         throw new Error('Failed to retrieve budget plans', { cause: responseText });
     }
-    return response.json();
+    return response.json() as Promise<{ budget_plans: Array<Budget_Plan> }>;
+
 }
 
 async function updateBudgetPlan(id: number, plan: Budget_Plan_Request, debug?: boolean) {
