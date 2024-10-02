@@ -1,0 +1,21 @@
+# Source code
+src
+local
+.env
+content
+
+node_modules
+
+# TypeScript config
+tsconfig.json
+
+# Git files
+.gitignore
+
+# Test files
+__tests__
+*.test.ts
+
+# Misc
+.DS_Store
+

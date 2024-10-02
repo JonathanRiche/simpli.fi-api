@@ -1,18 +1,40 @@
 {
-  "name": "simplfi",
-  "module": "index.ts",
+  "name": "simpl.fi-api-client",
+  "version": "1.0.0",
+  "description": "A TypeScript client for interacting with the Simpli.fi API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "publishConfig": {
+     "access": "public"
+   },
   "scripts": {
-    "dev": "bun ./index.ts"
+    "dev": "bun ./src/index.ts",
+    "build": "bun build ./index.ts --outdir ./dist --target node && tsc",
+    "prepublishOnly": "bun run build"
   },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "simplifi",
+    "api",
+    "client",
+    "typescript"
+  ],
+  "author": "Richetechguy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonathanRiche/simpli.fi-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JonathanRiche/simpli.fi-api/issues"
+  },
+  "homepage": "https://github.com/JonathanRiche/simpli.fi-api#readme",
   "devDependencies": {
     "@types/papaparse": "^5.3.10",
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
+    "bun-types": "latest",
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "papaparse": "^5.4.1"
   }
 }
