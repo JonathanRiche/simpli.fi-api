@@ -1,94 +1,99 @@
-//create a class with a config method that takes in a the two api keys from the .env file and has methods that includes the functions in ./campaigns/modifyCampaigns.ts
+import {
+    createCampaign,
+    deleteCampaign,
+    getCampaignById,
+    listCampaigns,
+    updateCampaign,
+    // CampaignRequest,
+    // Campaign,
+    ListCampaignsParams,
+    activateCampaign,
+    pauseCampaign,
+    endCampaign,
+    copyCampaign,
+} from "./campaigns/campaigns";
 
-import { createCampaign,deleteCampaign,getCampaignById,listCampaigns,updateCampaign } from "./campaigns/modifyCampaign";
+const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
 
-const defaultApiConfigErrorMessage = 'Please ensure to set your app and user api keys via the config method or in a .env file';
+export class SimplifiClient {
+    private appApiKey: string;
+    private userApiKey: string;
+    private orgId: string | null = null;
 
-export class Simplifi {
-    private appApiKey: string | null = null;
-    private userApiKey: string | null = null;
-    private headers : Record<string, string> = {};
-    private orgid: string | null = null;
+    constructor(appApiKey?: string, userApiKey?: string, orgId?: string) {
+        this.appApiKey = appApiKey || process.env.APP_API_TOKEN || "";
+        this.userApiKey = userApiKey || process.env.USER_API_KEY || "";
+        this.orgId = orgId || null;
 
-    constructor() {
-        if(process && process.env){
-            this.appApiKey = process.env.APP_API_TOKEN ?? "";
-            this.userApiKey = process.env.USER_API_KEY ?? "";
-            this.headers ={
-                "X-App-Key": this.appApiKey ,
-                "X-User-Key": this.userApiKey,
-                "Content-Type": "application/json",
-            } 
-        }else{
-            console.warn("No process.env found. Please set your app and user api keys in a .env file or pass them in via the config method");
+        if (!this.appApiKey || !this.userApiKey) {
+            console.warn("API keys not set. Please set your app and user API keys via the config method or in a .env file");
         }
-        
     }
 
-    public config(appApiKey: string, userApiKey: string,orgid?: string) {
+    public config(appApiKey: string, userApiKey: string, orgId?: string): void {
         this.appApiKey = appApiKey;
         this.userApiKey = userApiKey;
-        this.setHeaders();
-
-        if(orgid){
-            this.orgid = orgid;
-        }
+        this.orgId = orgId || null;
     }
 
-    private setHeaders(){
-        if(!this.appApiKey || !this.userApiKey){
-            throw Error();
-        }
-        this.headers ={
-            "X-App-Key": this.appApiKey ,
-            "X-User-Key": this.userApiKey,
-            "Content-Type": "application/json",
-        } 
-    }
-
-    private checkConfigParams(orgid:string | null){
-        if(!this.appApiKey || !this.userApiKey){
-            throw Error(defaultApiConfigErrorMessage);
+    private validateConfig(orgId?: string): string {
+        if (!this.appApiKey || !this.userApiKey) {
+            throw new Error(defaultApiConfigErrorMessage);
         }
 
-        if(orgid){
-           this.orgid = orgid; 
+        const validOrgId = orgId || this.orgId;
+        if (!validOrgId) {
+            throw new Error("Please provide an organization ID in the config method or in the method call");
         }
 
-        if(!this.orgid){
-            throw Error("Please provide an organization id in the config method or in the method declaration");
-        }
-
+        return validOrgId;
     }
 
-    public async createCampaign(campaignData: CampaignRequest,orgid: string | null = this.orgid) {
-        this.checkConfigParams(orgid);
-        // Call createCampaign function from ./campaigns/modifyCampaign.ts
-        createCampaign(campaignData,this.orgid!);
+    // Campaign methods
+    public async createCampaign(campaignData: CampaignRequest, orgId?: string): Promise<Campaign> {
+        const validOrgId = this.validateConfig(orgId);
+        return createCampaign(campaignData, validOrgId);
     }
 
-    public async deleteCampaign(campaignId:number,orgid: string | null = this.orgid) {
-        this.checkConfigParams(orgid);
-        
-        return deleteCampaign(campaignId, orgid!);
+    public async deleteCampaign(campaignId: number, orgId?: string): Promise<boolean> {
+        const validOrgId = this.validateConfig(orgId);
+        return deleteCampaign(campaignId, validOrgId);
     }
 
-    public async getCampaignById(campaignId: number, orgid: string | null = this.orgid) {
-        this.checkConfigParams(orgid);
-
-        getCampaignById(campaignId, orgid!);
+    public async getCampaignById(campaignId: number, orgId?: string): Promise<Campaign | null> {
+        const validOrgId = this.validateConfig(orgId);
+        return getCampaignById(campaignId, validOrgId);
     }
 
-    public async listCampaigns(orgid: string | null = this.orgid) {
-        this.checkConfigParams(orgid);
-
-        return listCampaigns(orgid!);
+    public async listCampaigns(params?: ListCampaignsParams, orgId?: string) {
+        const validOrgId = this.validateConfig(orgId);
+        return listCampaigns(validOrgId, params);
     }
 
-    public async updateCampaign(campaignId: number, campaignData: CampaignRequest,orgid: string | null = this.orgid) {
-        this.checkConfigParams(orgid);
-
-        return updateCampaign(campaignId,campaignData,orgid!);
+    public async updateCampaign(campaignId: number, campaignData: Partial<CampaignRequest>, orgId?: string): Promise<Campaign | null> {
+        const validOrgId = this.validateConfig(orgId);
+        return updateCampaign(campaignId, campaignData, validOrgId);
     }
+
+    public async activateCampaign(campaignId: number, orgId?: string): Promise<void> {
+        const validOrgId = this.validateConfig(orgId);
+        return activateCampaign(campaignId, validOrgId);
+    }
+
+    public async pauseCampaign(campaignId: number, orgId?: string): Promise<void> {
+        const validOrgId = this.validateConfig(orgId);
+        return pauseCampaign(campaignId, validOrgId);
+    }
+
+    public async endCampaign(campaignId: number, orgId?: string): Promise<void> {
+        const validOrgId = this.validateConfig(orgId);
+        return endCampaign(campaignId, validOrgId);
+    }
+
+    public async copyCampaign(campaignId: number, orgId?: string): Promise<Campaign> {
+        const validOrgId = this.validateConfig(orgId);
+        return copyCampaign(campaignId, validOrgId);
+    }
+
+    // Add other methods for different API endpoints (e.g., ads, creative assets, etc.) here
 }
-

@@ -11,7 +11,7 @@ const headers = {
     "Content-Type": "application/json",
 } as const;
 
-interface ListCampaignsParams {
+export interface ListCampaignsParams {
     filter?: string;
     include?: string[];
     page?: number;
@@ -24,7 +24,7 @@ interface ListCampaignsParams {
     sortOrder?: 'asc' | 'desc';
 }
 
-interface CampaignResponse {
+export interface CampaignResponse {
     campaigns: Campaign[];
     paging?: {
         page: number;
