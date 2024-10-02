@@ -10,6 +10,7 @@ import {
     endCampaign,
     copyCampaign,
     CampaignResponse,
+    type campaignResponse,
     type CampaignRequest,
     type Campaign,
 } from "./campaigns/campaigns";
@@ -101,7 +102,7 @@ export class SimplifiClient {
         return endCampaign(params.campaignId, validOrgId, this.debug);
     }
 
-    public async copyCampaign(params: { campaignId: number; newCampaignData?: Partial<CampaignRequest>; orgId?: string }): Promise<Campaign> {
+    public async copyCampaign(params: { campaignId: number; newCampaignData?: Partial<CampaignRequest>; orgId?: string }): Promise<campaignResponse> {
         const validOrgId = this.validateConfig(params.orgId);
         return copyCampaign(params.campaignId, validOrgId, this.debug);
     }

@@ -368,8 +368,8 @@ async function endCampaign(campaignId: number, orgid: string, debug?: boolean): 
         throw new Error('Failed to end campaign', { cause: responseText });
     }
 }
-
-async function copyCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<Campaign> {
+export type campaignResponse = { campaigns: Array<Campaign> };
+async function copyCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<campaignResponse> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/copy`, {
         method: 'POST',
         headers
@@ -378,7 +378,7 @@ async function copyCampaign(campaignId: number, orgid: string, debug?: boolean):
         const responseText = await response.text();
         throw new Error('Failed to copy campaign', { cause: responseText });
     }
-    return response.json() as Promise<Campaign>;
+    return response.json() as Promise<campaignResponse>;
 }
 
 export {
