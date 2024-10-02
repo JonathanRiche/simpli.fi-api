@@ -53,7 +53,7 @@ export interface CampaignResponse {
     };
 }
 
-async function listCampaigns(orgid: string, params?: ListCampaignsParams): Promise<CampaignResponse> {
+async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?: boolean): Promise<CampaignResponse> {
     const queryParams = new URLSearchParams();
     if (params) {
         if (params.filter) queryParams.append('filter', params.filter);
@@ -67,7 +67,9 @@ async function listCampaigns(orgid: string, params?: ListCampaignsParams): Promi
         if (params.sortColumn) queryParams.append('sortColumn', params.sortColumn);
         if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
     }
-
+    if (debug) {
+        console.log(queryParams.toString())
+    }
     const response = await fetch(`${campaignEndpoint(orgid)}?${queryParams.toString()}`, {
         method: "GET",
         headers
