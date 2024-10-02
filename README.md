@@ -66,6 +66,13 @@ const newCampaign = await client.createCampaign({
   }
 });
 ```
+Example of data to load into new campaign
+```csv
+name,status,start_date,end_date,budget_type,budget_amount,budget_period,timezone,goal_type,goal_amount,campaign_type,geo_type,device_types,geo_targets,keyword_targets
+Summer Sale 2024,active,2024-06-01,2024-08-31,total,10000,campaign,America/New_York,impressions,1000000,display,dma,"desktop,mobile,tablet","New York,Los Angeles,Chicago","summer sale,discount,promotion"
+Back to School 2024,paused,2024-08-01,2024-09-15,daily,500,day,America/Chicago,clicks,1000,video,zip,"mobile,tablet","60601,90210,33139","back to school,supplies,deals"
+Holiday Special 2024,draft,2024-12-01,2024-12-31,total,20000,campaign,America/Los_Angeles,conversions,500,native,city,"desktop,mobile","San Francisco,Seattle,Portland","holiday gift,christmas sale,new year"
+```
 
 #### Update Campaign
 
