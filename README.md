@@ -5,7 +5,9 @@ This package provides a TypeScript client for interacting with the Simpli.fi API
 ## Installation
 
 ```bash
-npm install simplifi-api-client
+npm i simpl.fi-api-client
+#or 
+bun add simpl.fi-api-client
 ```
 
 ## Usage
