@@ -75,23 +75,30 @@ async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to retrieve campaign list', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to retrieve campaign list', { cause: responseText });
     }
     return response.json() as Promise<CampaignResponse>;
 }
 
-async function createDraftCampaign(orgid: string): Promise<CampaignResponse> {
+async function createDraftCampaign(orgid: string, debug?: boolean): Promise<CampaignResponse> {
     const response = await fetch(`${campaignEndpoint(orgid)}`, {
         method: 'POST',
         headers,
     });
     if (!response.ok) {
-        throw new Error('Failed to create campaign', { cause: await response.text() });
+        const responseText = await response.text();
+
+        throw new Error('Failed to create campaign', { cause: responseText });
     }
-    return response.json() as Promise<CampaignResponse>;
+    const data = await response.json() as unknown as Promise<CampaignResponse>;
+    if (debug) {
+        console.info('Draft campaign created : ', data);
+    }
+    return data
 }
 
-async function getCampaignById(campaignId: number, orgid: string): Promise<Campaign | null> {
+async function getCampaignById(campaignId: number, orgid: string, debug?: boolean): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: "GET",
         headers
@@ -100,13 +107,15 @@ async function getCampaignById(campaignId: number, orgid: string): Promise<Campa
         return null;
     }
     if (!response.ok) {
-        throw new Error('Failed to retrieve campaign', { cause: await response.text() });
+        const responseText = await response.text();
+
+        throw new Error('Failed to retrieve campaign', { cause: responseText });
     }
 
     return response.json() as Promise<Campaign | null>;
 }
 
-async function updateCampaign(campaignId: number, campaignData: Partial<CampaignRequest>, orgid: string): Promise<Campaign | null> {
+async function updateCampaign(campaignId: number, campaignData: Partial<CampaignRequest>, orgid: string, debug?: boolean): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'PUT',
         headers: headers,
@@ -116,26 +125,29 @@ async function updateCampaign(campaignId: number, campaignData: Partial<Campaign
         return null;
     }
     if (!response.ok) {
-        console.log(await response.text())
-        throw new Error('Failed to update campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to update campaign', { cause: responseText });
     }
     const data = await response.json();
     return data.campaigns[0];
 }
 
-async function createCampaign(campaignData: CampaignRequest, orgid: string): Promise<Campaign> {
-    const { campaigns } = await createDraftCampaign(orgid);
-
-    const updates = await updateCampaign(campaigns[0].id!, campaignData, orgid);
-
+async function createCampaign(campaignData: CampaignRequest, orgid: string, debug?: boolean): Promise<{ campaign: Campaign, success: boolean }> {
+    const { campaigns } = await createDraftCampaign(orgid, debug);
+    let updates: Campaign | null = null;
+    try {
+        updates = await updateCampaign(campaigns[0].id!, campaignData, orgid, debug);
+    } catch (e) {
+        return { campaign: campaigns[0], success: false };
+    }
     if (!updates) {
         throw new Error('Failed to create campaign')
     }
 
-    return updates;
+    return { campaign: updates, success: true };
 }
 
-async function deleteCampaign(campaignId: number, orgid: string): Promise<boolean> {
+async function deleteCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<boolean> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'DELETE',
         headers
@@ -144,24 +156,26 @@ async function deleteCampaign(campaignId: number, orgid: string): Promise<boolea
         return false;
     }
     if (!response.ok) {
-        throw new Error('Failed to delete campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to delete campaign', { cause: responseText });
     }
     return true;
 }
 
-async function getCampaignBudgetPlan(campaignId: number, orgid: string): Promise<{ budget_plans: Array<Budget_Plan> }> {
+async function getCampaignBudgetPlan(campaignId: number, debug?: boolean): Promise<{ budget_plans: Array<Budget_Plan> }> {
     const endpoint = `https://app.simpli.fi/api/campaigns/${campaignId}/budget_plans`;
     const response = await fetch(endpoint, {
         method: "GET",
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to retrieve budget plans', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to retrieve budget plans', { cause: responseText });
     }
     return response.json();
 }
 
-async function updateBudgetPlan(id: number, plan: Budget_Plan_Request) {
+async function updateBudgetPlan(id: number, plan: Budget_Plan_Request, debug?: boolean) {
     const endpoint = `https://app.simpli.fi/api/budget_plans/${id}`;
 
     const response = await fetch(endpoint, {
@@ -177,43 +191,47 @@ async function updateBudgetPlan(id: number, plan: Budget_Plan_Request) {
     return response.json();
 }
 
-async function activateCampaign(campaignId: number, orgid: string): Promise<void> {
+async function activateCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/activate`, {
         method: 'POST',
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to activate campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to activate campaign', { cause: responseText });
     }
 }
 
-async function pauseCampaign(campaignId: number, orgid: string): Promise<void> {
+async function pauseCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/pause`, {
         method: 'POST',
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to pause campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to pause campaign', { cause: responseText });
     }
 }
 
-async function endCampaign(campaignId: number, orgid: string): Promise<void> {
+async function endCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/end`, {
         method: 'POST',
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to end campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to end campaign', { cause: responseText });
     }
 }
 
-async function copyCampaign(campaignId: number, orgid: string): Promise<Campaign> {
+async function copyCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<Campaign> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/copy`, {
         method: 'POST',
         headers
     });
     if (!response.ok) {
-        throw new Error('Failed to copy campaign', { cause: await response.text() });
+        const responseText = await response.text();
+        throw new Error('Failed to copy campaign', { cause: responseText });
     }
     return response.json() as Promise<Campaign>;
 }
