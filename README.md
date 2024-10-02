@@ -1,99 +1,126 @@
-# simpli.fi api
+# Simpli.fi API Client
 
-TypeScript package for use with the Simpli.fi REST API. [Simpli.fi](https://simpli.fi/)
-
-This package was updated with the latest version "2021-04-16" from their [API docs](https://app.simpli.fi/apidocs)
-
-## Getting Started
-
-Create a .env file based on the .env.dev secrets and add the correct tokens found in the Simpli.fi user & admin area.
-
-```s
-APP_API_TOKEN="REPLACE_WITH_YOUR_APP_APITOKEN"
-USER_API_KEY="REPLACE_WITH_YOUR_USER_APITOKEN"
-```
+This package provides a TypeScript client for interacting with the Simpli.fi API. It allows you to manage campaigns and perform various operations related to the Simpli.fi platform.
 
 ## Installation
 
 ```bash
-npm install @simpli.fi/api
-# or
-yarn add @simpli.fi/api
-# or 
-bun add @simpli.fi/api
+npm install simplifi-api-client
 ```
 
 ## Usage
 
-### Initializing the Client
+First, import the SimplifiClient:
 
 ```typescript
-import { SimplifiClient } from "@simpli.fi/api";
+import { SimplifiClient } from 'simplifi-api-client';
+```
 
+Then, create an instance of the client:
+
+```typescript
+const client = new SimplifiClient({
+  appApiKey: 'YOUR_APP_API_KEY',
+  userApiKey: 'YOUR_USER_API_KEY',
+  orgId: 'YOUR_ORGANIZATION_ID' // Optional, can be provided in method calls
+});
+```
+
+You can also use environment variables for configuration:
+
+```typescript
 const client = new SimplifiClient();
-// Or, if not using environment variables:
-// const client = new SimplifiClient('your-app-key', 'your-user-key', 'your-org-id');
 ```
 
-### Working with Campaigns
+This assumes you have set the following environment variables:
+- SIMPLIFI_APP_API_KEY
+- SIMPLIFI_USER_API_KEY
+- SIMPLIFI_ORG_ID (optional)
+
+### Campaign Operations
+
+#### List Campaigns
 
 ```typescript
-// List all campaigns
-const campaigns = await client.listCampaigns();
+const campaigns = await client.listCampaigns({
+  orgId: 'YOUR_ORG_ID', // Optional if provided in constructor
+  params: {
+    filter: { status: 'active' },
+    include: ['budget_flights'],
+    sort: '-created_at'
+  }
+});
+```
 
-// Create a new campaign
+#### Create Campaign
+
+```typescript
 const newCampaign = await client.createCampaign({
-  name: 'My New Campaign',
-  budget: 100,
-  campaign_type_id: 1,
-  start_date: "2023-10-13",
-  end_date: "2023-12-30"
+  orgId: 'YOUR_ORG_ID', // Optional if provided in constructor
+  campaignData: {
+    name: 'New Campaign',
+    status: 'active',
+    // ... other campaign properties
+  }
 });
-
-// Get a specific campaign
-const campaign = await client.getCampaignById(123456);
-
-// Update a campaign
-const updatedCampaign = await client.updateCampaign(123456, {
-  name: 'Updated Campaign Name'
-});
-
-// Delete a campaign
-const isDeleted = await client.deleteCampaign(123456);
-
-// Other campaign operations
-await client.activateCampaign(123456);
-await client.pauseCampaign(123456);
-await client.endCampaign(123456);
-const copiedCampaign = await client.copyCampaign(123456, { name: 'Copied Campaign' });
 ```
 
-## Types
-
-The package includes TypeScript definitions for all API responses and request parameters. Here's an example of the Campaign type:
+#### Update Campaign
 
 ```typescript
-type Campaign = {
-  name: string;
-  budget: number;
-  /** Campaign type (1: Search, 2: Contextual, 3: Site Retargeting, 4: IP Targeting, 5: Geo Optimized) */
-  campaign_type_id: 1 | 2 | 3 | 4 | 5;
-  start_date: string;
-  end_date: string;
-  status: string;
-  // ... other properties
-};
+const updatedCampaign = await client.updateCampaign({
+  orgId: 'YOUR_ORG_ID', // Optional if provided in constructor
+  campaignId: 'CAMPAIGN_ID',
+  campaignData: {
+    name: 'Updated Campaign Name',
+    // ... other properties to update
+  }
+});
 ```
 
-## Development
+#### Delete Campaign
 
-If you'd like to clone the repo to contribute or develop locally, we use [bun](https://bun.sh/) for local development/debugging. Everything should be compatible with Node.js as well; we only use bun.utils/testing outside of the main package.
+```typescript
+await client.deleteCampaign({
+  orgId: 'YOUR_ORG_ID', // Optional if provided in constructor
+  campaignId: 'CAMPAIGN_ID'
+});
+```
+
+#### Other Campaign Operations
+
+The client also supports operations like activate, pause, end, and copy campaigns:
+
+```typescript
+await client.activateCampaign({ orgId: 'ORG_ID', campaignId: 'CAMPAIGN_ID' });
+await client.pauseCampaign({ orgId: 'ORG_ID', campaignId: 'CAMPAIGN_ID' });
+await client.endCampaign({ orgId: 'ORG_ID', campaignId: 'CAMPAIGN_ID' });
+const copiedCampaign = await client.copyCampaign({ orgId: 'ORG_ID', campaignId: 'CAMPAIGN_ID' });
+```
+
+## Error Handling
+
+The client throws errors for various scenarios, including configuration issues and API errors. Always wrap your API calls in try-catch blocks:
+
+```typescript
+try {
+  const campaigns = await client.listCampaigns({ orgId: 'ORG_ID' });
+} catch (error) {
+  console.error('Error fetching campaigns:', error.message);
+}
+```
+
+## TypeScript Support
+
+This client is written in TypeScript and provides type definitions for all methods and responses.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please submit pull requests with any enhancements, bug fixes, or additional features.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 ```
+
+This README now reflects the current structure and usage of the SimplifiClient, including the updated configuration options and the ability to provide the organization ID either in the constructor or in individual method calls. It also includes examples for the main campaign operations and mentions error handling.
