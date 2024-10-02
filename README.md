@@ -66,13 +66,71 @@ const newCampaign = await client.createCampaign({
   }
 });
 ```
-Example of data to load into new campaign
+Example csv of data to load into new campaign
 ```csv
 name,status,start_date,end_date,budget_type,budget_amount,budget_period,timezone,goal_type,goal_amount,campaign_type,geo_type,device_types,geo_targets,keyword_targets
 Summer Sale 2024,active,2024-06-01,2024-08-31,total,10000,campaign,America/New_York,impressions,1000000,display,dma,"desktop,mobile,tablet","New York,Los Angeles,Chicago","summer sale,discount,promotion"
 Back to School 2024,paused,2024-08-01,2024-09-15,daily,500,day,America/Chicago,clicks,1000,video,zip,"mobile,tablet","60601,90210,33139","back to school,supplies,deals"
 Holiday Special 2024,draft,2024-12-01,2024-12-31,total,20000,campaign,America/Los_Angeles,conversions,500,native,city,"desktop,mobile","San Francisco,Seattle,Portland","holiday gift,christmas sale,new year"
 ```
+
+Example json of data to load into new campaign
+```json
+[
+  {
+    "name": "Summer Sale 2024",
+    "status": "active",
+    "start_date": "2024-06-01",
+    "end_date": "2024-08-31",
+    "budget_type": "total",
+    "budget_amount": 10000,
+    "budget_period": "campaign",
+    "timezone": "America/New_York",
+    "goal_type": "impressions",
+    "goal_amount": 1000000,
+    "campaign_type": "display",
+    "geo_type": "dma",
+    "device_types": ["desktop", "mobile", "tablet"],
+    "geo_targets": ["New York", "Los Angeles", "Chicago"],
+    "keyword_targets": ["summer sale", "discount", "promotion"]
+  },
+  {
+    "name": "Back to School 2024",
+    "status": "paused",
+    "start_date": "2024-08-01",
+    "end_date": "2024-09-15",
+    "budget_type": "daily",
+    "budget_amount": 500,
+    "budget_period": "day",
+    "timezone": "America/Chicago",
+    "goal_type": "clicks",
+    "goal_amount": 1000,
+    "campaign_type": "video",
+    "geo_type": "zip",
+    "device_types": ["mobile", "tablet"],
+    "geo_targets": ["60601", "90210", "33139"],
+    "keyword_targets": ["back to school", "supplies", "deals"]
+  },
+  {
+    "name": "Holiday Special 2024",
+    "status": "draft",
+    "start_date": "2024-12-01",
+    "end_date": "2024-12-31",
+    "budget_type": "total",
+    "budget_amount": 20000,
+    "budget_period": "campaign",
+    "timezone": "America/Los_Angeles",
+    "goal_type": "conversions",
+    "goal_amount": 500,
+    "campaign_type": "native",
+    "geo_type": "city",
+    "device_types": ["desktop", "mobile"],
+    "geo_targets": ["San Francisco", "Seattle", "Portland"],
+    "keyword_targets": ["holiday gift", "christmas sale", "new year"]
+  }
+]
+```
+
 
 #### Update Campaign
 
