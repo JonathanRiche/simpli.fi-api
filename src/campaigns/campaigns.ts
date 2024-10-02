@@ -28,6 +28,8 @@ type Budget_Plan_Request = {
     total_impressions?: number
 
 }
+export type campaignResponse = { campaigns: Array<CampaignResult> };
+
 export type CampaignRequest = {
     /** The name of the campaign. */
     name: string;
@@ -101,7 +103,112 @@ export type CampaignRequest = {
         goal_value: number;
     };
 };
-
+export type CampaignResult = {
+    /** The API resource type */
+    resource: string;
+    /** Campaign ID */
+    id: number;
+    /** Campaign name */
+    name: string;
+    /** Custom identifier for the campaign */
+    custom_id: string | null;
+    /** Current win rate of the campaign */
+    current_win_rate: number;
+    /** Daily budget for the campaign */
+    daily_budget: number;
+    /** Indicates if daily budget should be automatically adjusted */
+    auto_adjust_daily_budget: boolean;
+    /** Monthly budget for the campaign, if applicable */
+    monthly_budget: number | null;
+    /** Total budget allocated for the campaign */
+    total_budget: number;
+    /** Campaign status */
+    status: "Draft" | "Pending" | "Active" | "Paused" | "Ended" | "Suspended";
+    /** Cap on total impressions for the campaign */
+    impression_cap: number | null;
+    /** Cap on daily impressions */
+    daily_impression_cap: number | null;
+    /** Cap on monthly impressions */
+    monthly_impression_cap: number | null;
+    /** Indicates if daily impression cap should be automatically adjusted */
+    auto_adjust_daily_impression_cap: boolean;
+    /** Pacing value for the campaign */
+    pacing: number;
+    /** Indicates if automated pacing is enabled */
+    automated_pacing_enabled: boolean;
+    /** ID of the media type used in the campaign */
+    media_type_id: number;
+    /** Type of segment matching used */
+    segment_match_type: string;
+    /** Indicates if auto-optimization is enabled */
+    auto_optimize: boolean;
+    /** Window for click attribution in days */
+    click_attribution_window: number;
+    /** Window for view attribution in days */
+    view_attribution_window: number;
+    /** Indicates if organization blocklist opt-out is enabled */
+    org_blocklist_opt_out: boolean;
+    /** Start date for the campaign */
+    start_date: string;
+    /** End date for the campaign, if set */
+    end_date: string | null;
+    /** Bid amount for the campaign */
+    bid: number;
+    /** Bid type information */
+    bid_type: {
+        id: number;
+        name: string;
+    };
+    /** Viewability setting for the campaign */
+    viewability: string;
+    /** Week dayparting settings */
+    week_dayparting: number[][];
+    /** Frequency capping settings */
+    frequency_capping: {
+        /** Number of times to show an ad */
+        how_many_times: number;
+        /** Time frame for frequency capping in hours */
+        hours: number;
+    };
+    /** Campaign type information */
+    campaign_type: {
+        /** Campaign type ID (1: Search, 2: Contextual, 3: Site Retargeting, 4: IP Targeting, 5: Geo Optimized) */
+        id: number;
+        /** Name of the campaign type */
+        name: string;
+    };
+    /** Campaign goal settings */
+    campaign_goal: {
+        /** Type of campaign goal */
+        goal_type: string;
+        /** Value of the campaign goal */
+        goal_value: number;
+        /** Cost per acquisition view-through percentage */
+        cpa_view_thru_per: number;
+        /** Cost per acquisition click-through percentage */
+        cpa_click_thru_per: number;
+    };
+    /** OBA (Online Behavioral Advertising) provider information */
+    oba_provider: {
+        id: number;
+        name: string;
+    };
+    /** Available actions for the campaign */
+    actions: {
+        activate?: {
+            href: string;
+            method: string;
+        };
+        copy?: {
+            href: string;
+            method: string;
+        };
+    }[];
+    /** Associated resources for the campaign */
+    resources: {
+        [key: string]: string;
+    }[];
+}
 /**
  * Represents a campaign object.
  */
@@ -368,7 +475,6 @@ async function endCampaign(campaignId: number, orgid: string, debug?: boolean): 
         throw new Error('Failed to end campaign', { cause: responseText });
     }
 }
-export type campaignResponse = { campaigns: Array<Campaign> };
 async function copyCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<campaignResponse> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/copy`, {
         method: 'POST',
