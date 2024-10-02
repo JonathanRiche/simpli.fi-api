@@ -10,8 +10,8 @@ import {
     endCampaign,
     copyCampaign,
     CampaignResponse,
-    // type CampaignRequest,
-    // type Campaign,
+    type CampaignRequest,
+    type Campaign,
 } from "./campaigns/campaigns";
 
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';

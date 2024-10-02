@@ -13,10 +13,56 @@ const headers = {
     "X-User-Key": userKey ?? "",
     "Content-Type": "application/json",
 };
+export type Ad = {
+    resource: string;
+    id: number;
+    name: string;
+    status: 'Active' | 'Paused' | 'Deleted'; // Possible statuses
+    pacing: number;
+    creative_group_id: number | null;
+    click_tag_verified: boolean | null;
+    preview_tag: string;
+    target_url: string;
+    primary_creative: string;
+    primary_creative_url: string;
+    dynamic_ad_feed_id: number | null;
+    feed_filter_id: number | null;
+    extra_html: string | null;
+    actions: {
+        pause: {
+            href: string;
+            method: 'POST';
+        };
+        verify_click_tag: {
+            href: string;
+            method: 'POST';
+        };
+    }[];
+    resources: {
+        ad_file_types: string;
+    }[];
+}
+type AdFileTypeName =
+    | "Image"
+    | "Flash"
+    | "HTML"
+    | "Facebook"
+    | "Video"
+    | "Click-To-Call"
+    | "Third Party Video"
+    | "HTML5"
+    | "Native"
+    | "Audio";
 
+export type AdFileType = {
+    resource: string;
+    id: number;
+    name: AdFileTypeName;
+};
 //multipart/form-data
 //https://app.simpli.fi/api/ad_file_types
-interface AdCreateParams {
+export interface AdCreateParams {
+
     name: string;
     ad_file_type_id: string | number;
     ad_size_id: string | number;
@@ -24,14 +70,14 @@ interface AdCreateParams {
     // Add other properties as needed
 }
 
-interface AdUpdateParams {
+export interface AdUpdateParams {
     name?: string;
     pacing?: number;
     target_url?: string;
     // Add other properties that can be updated
 }
 
-interface ListAdsParams {
+export interface ListAdsParams {
     filter?: string;
     include?: string;
     allow_deleted?: boolean;
