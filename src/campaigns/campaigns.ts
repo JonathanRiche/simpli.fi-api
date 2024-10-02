@@ -12,12 +12,32 @@ const headers = {
 } as const;
 
 export interface ListCampaignsParams {
+    /** 
+     *Filter
+You can pass a filter query string param to limit the result set.
+
+Example:
+?filter=status%3Dactive%2Cstatus%3Dpending
+?filter=status%3Dpending%3Bstart_date%3E%3D2011-01-01
+
+Alternative Filter Options
+Instead of using the query string, other params can be used to filter the returned campaigns. These are exclusive with the filter param, and if the filter param is present, it will take precedence.
+
+Filter campaigns by exact name match example:
+?name=foo
+
+Filter campaigns by name similarity match example:
+?name_like=foo
+     * */
     filter?: string;
     include?: string[];
     page?: number;
     size?: number;
     attributes_only?: boolean;
     children?: boolean;
+    /** 
+     * Name used in conjunction with the filter param to filter campaigns by exact name match.
+     * **/
     name?: string;
     name_like?: string;
     sortColumn?: 'name' | 'name_like' | 'created_at';
