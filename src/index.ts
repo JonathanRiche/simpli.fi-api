@@ -9,6 +9,7 @@ import {
     pauseCampaign,
     endCampaign,
     copyCampaign,
+    CampaignResponse,
     // type CampaignRequest,
     // type Campaign,
 } from "./campaigns/campaigns";
@@ -68,9 +69,9 @@ export class SimplifiClient {
         return getCampaignById(params.campaignId, validOrgId);
     }
 
-    public async listCampaigns(params?: { listParams?: ListCampaignsParams; orgId?: string }) {
+    public async listCampaigns(params?: { listParams?: ListCampaignsParams; orgId?: string, debug?: boolean }): Promise<CampaignResponse> {
         const validOrgId = this.validateConfig(params?.orgId);
-        return listCampaigns(validOrgId, params?.listParams);
+        return listCampaigns(validOrgId, params?.listParams, params?.debug);
     }
 
     public async updateCampaign(params: { campaignId: number; campaignData: Partial<CampaignRequest>; orgId?: string }): Promise<Campaign | null> {
