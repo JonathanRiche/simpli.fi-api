@@ -24,20 +24,36 @@ declare global {
         feed_filter_id: number | null;
         extra_html: string | null;
         actions: {
-          pause: {
-            href: string;
-            method: 'POST';
-          };
-          verify_click_tag: {
-            href: string;
-            method: 'POST';
-          };
+            pause: {
+                href: string;
+                method: 'POST';
+            };
+            verify_click_tag: {
+                href: string;
+                method: 'POST';
+            };
         }[];
         resources: {
-          ad_file_types: string;
+            ad_file_types: string;
         }[];
-      }
+    }
+    type AdFileTypeName =
+        | "Image"
+        | "Flash"
+        | "HTML"
+        | "Facebook"
+        | "Video"
+        | "Click-To-Call"
+        | "Third Party Video"
+        | "HTML5"
+        | "Native"
+        | "Audio";
 
+    type AdFileType = {
+        resource: string;
+        id: number;
+        name: AdFileTypeName;
+    };
     type Budget_Plan = {
         id: number,
         start_date: string,
@@ -50,11 +66,11 @@ declare global {
     }
 
     type Budget_Plan_Request = {
-            start_date?: string,
-            end_date?: string,
-            total_budget?: number,
-            total_impressions?: number
-          
+        start_date?: string,
+        end_date?: string,
+        total_budget?: number,
+        total_impressions?: number
+
     }
 
     type Coordinates = number[][];
