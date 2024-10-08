@@ -161,7 +161,7 @@ export async function verifyClickTag(orgid: string, campaignId: string, adId: nu
     }
 }
 
-interface BulkAdsResponse {
+export interface BulkAdsResponse {
     ads: Ad[];
     not_valid_ad_ids: number[];
     not_permitted_ad_ids: number[];

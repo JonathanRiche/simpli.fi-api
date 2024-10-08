@@ -14,6 +14,19 @@ import {
     type CampaignRequest,
     type Campaign,
 } from "./campaigns/campaigns";
+import {
+    type Ad,
+    type AdCreateParams,
+    type AdUpdateParams,
+    type BulkAdsResponse,
+    listAds,
+    createAd,
+    updateAd,
+    pauseAd,
+    verifyClickTag,
+    getBulkAds,
+    createAdWithFile
+} from "./ads/ads";
 
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
 type Config = { appApiKey?: string; userApiKey?: string; orgId?: string, debug?: boolean };
@@ -106,6 +119,44 @@ export class SimplifiClient {
         const validOrgId = this.validateConfig(params.orgId);
         return copyCampaign(params.campaignId, validOrgId, this.debug);
     }
+
+    public async listAds(params: { orgId?: string; campaignId?: number; filter?: string; include?: string; allow_deleted?: boolean; attributes_only?: boolean }): Promise<Ad[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        if (!params.campaignId) {
+            throw new Error('Please provide a campaign ID');
+        }
+        return listAds(validOrgId, params.campaignId.toString(), params);
+    }
+
+    public async createAd(params: { orgId?: string; campaignId: number; ad: AdCreateParams }): Promise<Ad> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return createAd(validOrgId, params.campaignId.toString(), params.ad);
+    }
+
+    public async updateAd(params: { orgId?: string; campaignId: number; adId: number; ad: AdUpdateParams }): Promise<Ad> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return updateAd(validOrgId, params.campaignId.toString(), params.adId, params.ad);
+    }
+
+    public async pauseAd(params: { orgId?: string; campaignId: number; adId: number }): Promise<void> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return pauseAd(validOrgId, params.campaignId.toString(), params.adId);
+    }
+
+    public async verifyClickTag(params: { orgId?: string; campaignId: number; adId: number }): Promise<void> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return verifyClickTag(validOrgId, params.campaignId.toString(), params.adId);
+    }
+
+    public async getBulkAds(params: { orgId?: string; campaignId: number; adIds: number[]; previewOnly?: boolean }): Promise<BulkAdsResponse> {
+        return getBulkAds(params.adIds, params.previewOnly);
+    }
+
+    public async createAdWithFile(params: { orgId?: string; campaignId: number; ad: AdCreateParams; file: File }): Promise<Ad> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return createAdWithFile(validOrgId, params.campaignId.toString(), params.ad, params.file);
+    }
+
 
     // Add other methods for different API endpoints (e.g., ads, creative assets, etc.) here
 }
