@@ -2,6 +2,8 @@
 
 This package provides a TypeScript client for interacting with the Simpli.fi API. It allows you to manage campaigns and perform various operations related to the Simpli.fi platform.
 
+[NPM Package](https://www.npmjs.com/package/simpl.fi-api-client)
+
 ## Installation
 
 ```bash
