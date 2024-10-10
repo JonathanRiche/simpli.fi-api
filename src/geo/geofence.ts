@@ -21,6 +21,23 @@ export interface GeoFence {
     radius_unit: 'mi' | 'km';
 }
 
+export type Coordinate = [number, number];
+
+// type Polygon = {
+//     type: "Polygon";
+//     coordinates: Coordinate[][];
+// };
+
+
+export type GeoFenceParams = {
+    name: string;
+    bid_area: {
+        type: "Polygon" | "Conversion"
+        coordinates: Coordinate[][];
+
+    };
+};
+
 export interface GeoFenceCreateParams {
     name: string;
     latitude: number;
@@ -40,7 +57,7 @@ export async function getGeoFences(orgid: string, campaignId: string): Promise<G
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function addGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceCreateParams[]): Promise<GeoFence[]> {
+export async function addGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[]): Promise<GeoFence[]> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "POST",
         headers,
@@ -52,7 +69,7 @@ export async function addGeoFences(orgid: string, campaignId: string, geoFences:
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function replaceGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceCreateParams[]): Promise<GeoFence[]> {
+export async function replaceGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[]): Promise<GeoFence[]> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "PUT",
         headers,
@@ -64,7 +81,7 @@ export async function replaceGeoFences(orgid: string, campaignId: string, geoFen
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function updateGeoFence(orgid: string, campaignId: string, geoFenceId: number, updates: Partial<GeoFenceCreateParams>): Promise<GeoFence> {
+export async function updateGeoFence(orgid: string, campaignId: string, geoFenceId: number, updates: Partial<GeoFenceParams>): Promise<GeoFence> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}/${geoFenceId}`, {
         method: "PUT",
         headers,
