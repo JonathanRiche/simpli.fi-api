@@ -62,12 +62,12 @@ export type AdFileType = {
 //multipart/form-data
 //https://app.simpli.fi/api/ad_file_types
 export interface AdCreateParams {
-
     name: string;
-    ad_file_type_id: string | number;
-    ad_size_id: string | number;
+    alt_text: string;
     target_url: string;
-    // Add other properties as needed
+    pacing: number;
+    ad_file_type_id: number;
+    ad_size_id: number;
 }
 
 export interface AdUpdateParams {
@@ -195,6 +195,7 @@ export async function createAdWithFile(orgid: string, campaignId: string, ad: Ad
         headers: {
             "X-App-Key": appKey ?? "",
             "X-User-Key": userKey ?? "",
+            "Content-Type": `multipart/form-data`,
             // Don't set Content-Type header here, let the browser set it with the boundary
         },
         body: formData
