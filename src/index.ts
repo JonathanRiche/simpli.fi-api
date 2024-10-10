@@ -28,7 +28,7 @@ import {
     createAdWithFile
 } from "./ads/ads";
 // import { get, getSingleGeoTarget } from "./geo/geotarget.ts";
-import { type GeoFenceParams, type GeoFence, addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences } from "./geo/geofence.ts";
+import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence } from "./geo/geofence.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
