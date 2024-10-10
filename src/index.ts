@@ -31,6 +31,7 @@ import {
 import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence } from "./geo/geofence.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
+import type { BunFile } from "bun";
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
 type Config = { appApiKey?: string; userApiKey?: string; orgId?: string, debug?: boolean };
 
@@ -155,7 +156,9 @@ export class SimplifiClient {
         return getBulkAds(params.adIds, params.previewOnly);
     }
 
-    public async createAdWithFile(params: { orgId?: string; campaignId: number; ad: AdCreateParams; file: File }): Promise<Ad> {
+    public async createAdWithFile(params: {
+        orgId?: string; campaignId: number; ad: AdCreateParams; file: File | Blob | BunFile
+    }): Promise<Ad> {
         const validOrgId = this.validateConfig(params.orgId);
         return createAdWithFile(validOrgId, params.campaignId.toString(), params.ad, params.file);
     }
