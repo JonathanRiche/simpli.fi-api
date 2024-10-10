@@ -12,7 +12,7 @@ import {
     CampaignResponse,
     type campaignResponse,
     type CampaignRequest,
-    type Campaign,
+    type Campaign
 } from "./campaigns/campaigns";
 import {
     type Ad,
@@ -27,7 +27,10 @@ import {
     getBulkAds,
     createAdWithFile
 } from "./ads/ads";
+// import { get, getSingleGeoTarget } from "./geo/geotarget.ts";
+import { type GeoFence, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, GeoFenceCreateParams } from "./geo/geofence.ts";
 
+import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
 type Config = { appApiKey?: string; userApiKey?: string; orgId?: string, debug?: boolean };
 
@@ -155,6 +158,31 @@ export class SimplifiClient {
     public async createAdWithFile(params: { orgId?: string; campaignId: number; ad: AdCreateParams; file: File }): Promise<Ad> {
         const validOrgId = this.validateConfig(params.orgId);
         return createAdWithFile(validOrgId, params.campaignId.toString(), params.ad, params.file);
+    }
+
+
+    public async getGeoFences(params: { orgId?: string; campaignId: number }): Promise<GeoFence[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getGeoFences(validOrgId, params.campaignId.toString());
+    }
+    public async deleteGeoFence(params: { orgId?: string; campaignId: number; geoFenceId: number }): Promise<void> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return deleteGeoFence(validOrgId, params.campaignId.toString(), params.geoFenceId);
+    }
+    public async updateGeoFence(params: { orgId?: string; campaignId: number; geoFenceId: number; geoFence: GeoFenceCreateParams }): Promise<GeoFence> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return updateGeoFence(validOrgId, params.campaignId.toString(), params.geoFenceId, params.geoFence);
+    }
+    public async replaceGeoFences(params: { orgId?: string; campaignId: number; geoFences: GeoFenceCreateParams[] }): Promise<GeoFence[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return replaceGeoFences(validOrgId, params.campaignId.toString(), params.geoFences);
+    }
+
+    public async getAllLandUses(params: { orgId?: string }): Promise<LandUse[]> {
+        return getAllLandUses();
+    }
+    public async getSingleLandUse(params: { orgId?: string; landUseId: number }): Promise<LandUse> {
+        return getSingleLandUse(params.landUseId);
     }
 
 
