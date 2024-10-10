@@ -1,3 +1,4 @@
+import type { BunFile } from "bun";
 import { BaseURL } from "../defaults";
 
 const adEndpoint = (orgid: string, campaignId: string) => `${BaseURL}${orgid}/campaigns/${campaignId}/ads`;
@@ -183,23 +184,41 @@ export async function getBulkAds(adIds: number[], previewOnly: boolean = false):
     return response.json() as Promise<BulkAdsResponse>;
 }
 
-export async function createAdWithFile(orgid: string, campaignId: string, ad: AdCreateParams, file: File): Promise<Ad> {
+export async function createAdWithFile(
+    orgid: string,
+    campaignId: string,
+    ad: AdCreateParams,
+    file: File | Blob | BunFile
+): Promise<Ad> {
     const formData = new FormData();
     Object.entries(ad).forEach(([key, value]) => {
         formData.append(`ad[${key}]`, value.toString());
     });
-    formData.append('ad[primary_creative]', file);
+
+    // Handle different file types
+    if (file instanceof File) {
+        formData.append('ad[primary_creative]', file);
+    } else if (file instanceof Blob) {
+        formData.append('ad[primary_creative]', file, 'image.jpg'); // Provide a default filename
+    } else if ('arrayBuffer' in file && 'type' in file && 'name' in file) {
+        // This should cover the BunFile case
+        //@ts-ignore
+        const buffer = await file.arrayBuffer();
+        //@ts-ignore
+        formData.append('ad[primary_creative]', new Blob([buffer], { type: file.type }), file.name);
+    } else {
+        throw new Error('Unsupported file type');
+    }
 
     const response = await fetch(`${adEndpoint(orgid, campaignId)}`, {
         method: "POST",
         headers: {
             "X-App-Key": appKey ?? "",
             "X-User-Key": userKey ?? "",
-            "Content-Type": `multipart/form-data`,
-            // Don't set Content-Type header here, let the browser set it with the boundary
         },
         body: formData
     });
+
     if (!response.ok) {
         const textResponse = await response.text();
         throw new Error('Failed to create ad with file', { cause: textResponse });
