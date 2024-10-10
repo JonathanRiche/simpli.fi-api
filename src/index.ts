@@ -28,7 +28,7 @@ import {
     createAdWithFile
 } from "./ads/ads";
 // import { get, getSingleGeoTarget } from "./geo/geotarget.ts";
-import { type GeoFence, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, GeoFenceCreateParams } from "./geo/geofence.ts";
+import { type GeoFence, addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, GeoFenceCreateParams } from "./geo/geofence.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
@@ -164,6 +164,10 @@ export class SimplifiClient {
     public async getGeoFences(params: { orgId?: string; campaignId: number }): Promise<GeoFence[]> {
         const validOrgId = this.validateConfig(params.orgId);
         return getGeoFences(validOrgId, params.campaignId.toString());
+    }
+    public async addGeoFences(params: { orgId?: string; campaignId: number; geoFences: GeoFenceCreateParams[] }): Promise<GeoFence[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return addGeoFences(validOrgId, params.campaignId.toString(), params.geoFences);
     }
     public async deleteGeoFence(params: { orgId?: string; campaignId: number; geoFenceId: number }): Promise<void> {
         const validOrgId = this.validateConfig(params.orgId);
