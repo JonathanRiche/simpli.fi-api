@@ -1,0 +1,8 @@
+{
+  "name": "Test Ad",
+  "alt_text": "Test Ad",
+  "target_url": "https://www.google.com",
+  "pacing": 100,
+  "ad_file_type_id": 2,
+  "ad_size_id": 1
+}

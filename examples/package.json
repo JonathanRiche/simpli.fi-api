@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "simpl.fi-api-client": "^1.0.5"
+    "dotenv": "^16.4.5",
+    "simpl.fi-api-client": "^1.0.87"
   }
 }

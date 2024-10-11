@@ -19,6 +19,7 @@ import {
     type AdCreateParams,
     type AdUpdateParams,
     type BulkAdsResponse,
+    type HtmlAd,
     listAds,
     createAd,
     updateAd,
@@ -132,7 +133,7 @@ export class SimplifiClient {
         return listAds(validOrgId, params.campaignId.toString(), params);
     }
 
-    public async createAd(params: { orgId?: string; campaignId: number; ad: AdCreateParams }): Promise<Ad> {
+    public async createHTMLAd(params: { orgId?: string; campaignId: number; ad: HtmlAd }): Promise<Ad> {
         const validOrgId = this.validateConfig(params.orgId);
         return createAd(validOrgId, params.campaignId.toString(), params.ad);
     }

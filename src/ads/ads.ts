@@ -71,6 +71,16 @@ export interface AdCreateParams {
     ad_size_id: number;
 }
 
+export type HtmlAd = {
+    name: string;
+    ad_file_type_id: string;
+    ad_size_id: string;
+    ad_placement_id: number;
+    target_url: string;
+    html: string;
+    extra_html?: string;  // Optional field
+}
+
 export interface AdUpdateParams {
     name?: string;
     pacing?: number;
@@ -116,14 +126,10 @@ export async function listAds(orgid: string, campaignId: string, params?: ListAd
     return response.json() as Promise<Ad[]>;
 }
 
-export async function createAd(orgid: string, campaignId: string, ad: AdCreateParams): Promise<Ad> {
+export async function createAd(orgid: string, campaignId: string, ad: HtmlAd): Promise<Ad> {
     const response = await fetch(`${adEndpoint(orgid, campaignId)}`, {
         method: "POST",
-        headers: {
-            "X-App-Key": appKey ?? "",
-            "X-User-Key": userKey ?? "",
-            'Content-Type': 'multipart/form-data'
-        },
+        headers,
         body: JSON.stringify({ ad })
     });
     if (!response.ok) {
@@ -224,7 +230,9 @@ export async function createAdWithFile(
         headers: {
             "X-App-Key": appKey ?? "",
             "X-User-Key": userKey ?? "",
+            'Content-Type': 'multipart/form-data'
         },
+
         body: formData
     });
 
