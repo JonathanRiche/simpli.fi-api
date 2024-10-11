@@ -119,7 +119,11 @@ export async function listAds(orgid: string, campaignId: string, params?: ListAd
 export async function createAd(orgid: string, campaignId: string, ad: AdCreateParams): Promise<Ad> {
     const response = await fetch(`${adEndpoint(orgid, campaignId)}`, {
         method: "POST",
-        headers,
+        headers: {
+            "X-App-Key": appKey ?? "",
+            "X-User-Key": userKey ?? "",
+            'Content-Type': 'multipart/form-data'
+        },
         body: JSON.stringify({ ad })
     });
     if (!response.ok) {
