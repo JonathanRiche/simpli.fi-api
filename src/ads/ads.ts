@@ -188,7 +188,8 @@ export async function createAdWithFile(
     orgid: string,
     campaignId: string,
     ad: AdCreateParams,
-    file: File | Blob | BunFile
+    file: File | Blob | BunFile,
+    debug?: boolean
 ): Promise<Ad> {
     const formData = new FormData();
     Object.entries(ad).forEach(([key, value]) => {
@@ -198,9 +199,12 @@ export async function createAdWithFile(
     // Handle different file types
     if (file instanceof File) {
         formData.append('ad[primary_creative]', file);
+        if (debug) console.log(`Instance of file File type: ${file.type} `);
     } else if (file instanceof Blob) {
         formData.append('ad[primary_creative]', file, 'image.jpg'); // Provide a default filename
+        if (debug) console.log(`Instance of Bblob File type: ${file.type} `);
     } else if ('arrayBuffer' in file && 'type' in file && 'name' in file) {
+        if (debug) console.log(`Instance of buffer File type: `);
         // This should cover the BunFile case
         //@ts-ignore
         const buffer = await file.arrayBuffer();
@@ -210,6 +214,7 @@ export async function createAdWithFile(
         throw new Error('Unsupported file type');
     }
 
+    if (debug) console.log(formData);
     const response = await fetch(`${adEndpoint(orgid, campaignId)}`, {
         method: "POST",
         headers: {

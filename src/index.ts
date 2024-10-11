@@ -157,10 +157,10 @@ export class SimplifiClient {
     }
 
     public async createAdWithFile(params: {
-        orgId?: string; campaignId: number; ad: AdCreateParams; file: File | Blob | BunFile
+        orgId?: string; campaignId: number; ad: AdCreateParams; file: File | Blob | BunFile, debug?: boolean
     }): Promise<Ad> {
         const validOrgId = this.validateConfig(params.orgId);
-        return createAdWithFile(validOrgId, params.campaignId.toString(), params.ad, params.file);
+        return createAdWithFile(validOrgId, params.campaignId.toString(), params.ad, params.file, params.debug);
     }
 
 
