@@ -1,4 +1,4 @@
-import { BaseURL } from "../defaults";
+import { type RequestHeaders, BaseURL, checkEnvApiKeys } from "../defaults";
 
 const campaignEndpoint = (orgid: string) => `${BaseURL}${orgid}/campaigns`;
 
@@ -28,8 +28,6 @@ type Budget_Plan_Request = {
     total_impressions?: number
 
 }
-export type campaignResponse = { campaigns: Array<CampaignResult> };
-
 export type CampaignRequest = {
     /** The name of the campaign. */
     name: string;
@@ -304,7 +302,7 @@ export interface CampaignResponse {
     };
 }
 
-async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?: boolean): Promise<CampaignResponse> {
+async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?: boolean, headers?: RequestHeaders): Promise<CampaignResponse> {
     const queryParams = new URLSearchParams();
     if (params) {
         if (params.filter) queryParams.append('filter', params.filter);
@@ -323,7 +321,7 @@ async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?
     }
     const response = await fetch(`${campaignEndpoint(orgid)}?${queryParams.toString()}`, {
         method: "GET",
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
@@ -332,10 +330,10 @@ async function listCampaigns(orgid: string, params?: ListCampaignsParams, debug?
     return response.json() as Promise<CampaignResponse>;
 }
 
-async function createDraftCampaign(orgid: string, debug?: boolean): Promise<CampaignResponse> {
+async function createDraftCampaign(orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<CampaignResponse> {
     const response = await fetch(`${campaignEndpoint(orgid)}`, {
         method: 'POST',
-        headers,
+        headers: checkEnvApiKeys() || headers,
     });
     if (!response.ok) {
         const responseText = await response.text();
@@ -349,10 +347,10 @@ async function createDraftCampaign(orgid: string, debug?: boolean): Promise<Camp
     return data
 }
 
-async function getCampaignById(campaignId: number, orgid: string, debug?: boolean): Promise<Campaign | null> {
+async function getCampaignById(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: "GET",
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (response.status === 404) {
         return null;
@@ -366,10 +364,10 @@ async function getCampaignById(campaignId: number, orgid: string, debug?: boolea
     return response.json() as Promise<Campaign | null>;
 }
 
-async function updateCampaign(campaignId: number, campaignData: Partial<CampaignRequest>, orgid: string, debug?: boolean): Promise<Campaign | null> {
+async function updateCampaign(campaignId: number, campaignData: Partial<CampaignRequest>, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<Campaign | null> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'PUT',
-        headers: headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify({ campaign: campaignData }),
     });
     if (response.status === 404) {
@@ -383,7 +381,7 @@ async function updateCampaign(campaignId: number, campaignData: Partial<Campaign
     return data;
 }
 
-async function createCampaign(campaignData: CampaignRequest, orgid: string, debug?: boolean): Promise<{ campaign: Campaign, success: boolean }> {
+async function createCampaign(campaignData: CampaignRequest, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<{ campaign: Campaign, success: boolean }> {
     const { campaigns } = await createDraftCampaign(orgid, debug);
     let updates: Campaign | null = null;
     try {
@@ -398,10 +396,10 @@ async function createCampaign(campaignData: CampaignRequest, orgid: string, debu
     return { campaign: updates, success: true };
 }
 
-async function deleteCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<boolean> {
+async function deleteCampaign(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<boolean> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}`, {
         method: 'DELETE',
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (response.status === 404) {
         return false;
@@ -413,11 +411,11 @@ async function deleteCampaign(campaignId: number, orgid: string, debug?: boolean
     return true;
 }
 
-async function getCampaignBudgetPlan(campaignId: number, debug?: boolean): Promise<{ budget_plans: Array<Budget_Plan> }> {
+async function getCampaignBudgetPlan(campaignId: number, debug?: boolean, headers?: RequestHeaders): Promise<{ budget_plans: Array<Budget_Plan> }> {
     const endpoint = `https://app.simpli.fi/api/campaigns/${campaignId}/budget_plans`;
     const response = await fetch(endpoint, {
         method: "GET",
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
@@ -427,12 +425,12 @@ async function getCampaignBudgetPlan(campaignId: number, debug?: boolean): Promi
 
 }
 
-async function updateBudgetPlan(id: number, plan: Budget_Plan_Request, debug?: boolean) {
+async function updateBudgetPlan(id: number, plan: Budget_Plan_Request, debug?: boolean, headers?: RequestHeaders) {
     const endpoint = `https://app.simpli.fi/api/budget_plans/${id}`;
 
     const response = await fetch(endpoint, {
         method: "PUT",
-        headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify(plan)
     });
     if (!response.ok) {
@@ -443,10 +441,10 @@ async function updateBudgetPlan(id: number, plan: Budget_Plan_Request, debug?: b
     return response.json();
 }
 
-async function activateCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
+async function activateCampaign(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/activate`, {
         method: 'POST',
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
@@ -454,10 +452,10 @@ async function activateCampaign(campaignId: number, orgid: string, debug?: boole
     }
 }
 
-async function pauseCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
+async function pauseCampaign(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/pause`, {
         method: 'POST',
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
@@ -465,26 +463,26 @@ async function pauseCampaign(campaignId: number, orgid: string, debug?: boolean)
     }
 }
 
-async function endCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<void> {
+async function endCampaign(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<void> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/end`, {
         method: 'POST',
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
         throw new Error('Failed to end campaign', { cause: responseText });
     }
 }
-async function copyCampaign(campaignId: number, orgid: string, debug?: boolean): Promise<campaignResponse> {
+async function copyCampaign(campaignId: number, orgid: string, debug?: boolean, headers?: RequestHeaders): Promise<CampaignResponse> {
     const response = await fetch(`${campaignEndpoint(orgid)}/${campaignId}/copy`, {
         method: 'POST',
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         const responseText = await response.text();
         throw new Error('Failed to copy campaign', { cause: responseText });
     }
-    return response.json() as Promise<campaignResponse>;
+    return response.json() as Promise<CampaignResponse>;
 }
 
 export {

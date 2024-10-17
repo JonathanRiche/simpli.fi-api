@@ -1,4 +1,4 @@
-import { BaseURL } from "../defaults";
+import { BaseURL, checkEnvApiKeys, type RequestHeaders } from "../defaults";
 
 const landUseEndpoint = `${BaseURL}land_uses`;
 
@@ -18,7 +18,7 @@ export interface LandUse {
     resource: string;
 }
 
-export async function getAllLandUses(): Promise<LandUse[]> {
+export async function getAllLandUses(headers?: RequestHeaders): Promise<LandUse[]> {
     const response = await fetch(landUseEndpoint, {
         method: "GET",
         headers
@@ -30,7 +30,7 @@ export async function getAllLandUses(): Promise<LandUse[]> {
     return data.land_uses as LandUse[];
 }
 
-export async function getSingleLandUse(id: number): Promise<LandUse> {
+export async function getSingleLandUse(id: number, headers?: RequestHeaders): Promise<LandUse> {
     const response = await fetch(`${landUseEndpoint}/${id}`, {
         method: "GET",
         headers

@@ -1,4 +1,4 @@
-import { BaseURL } from "../defaults";
+import { BaseURL, checkEnvApiKeys, type RequestHeaders } from "../defaults";
 
 const geofenceEndpoint = (orgid: string, campaignId: string) => `${BaseURL}${orgid}/campaigns/${campaignId}/geo_fences`;
 
@@ -46,10 +46,10 @@ export interface GeoFenceCreateParams {
     radius_unit: 'mi' | 'km';
 }
 
-export async function getGeoFences(orgid: string, campaignId: string): Promise<GeoFence[]> {
+export async function getGeoFences(orgid: string, campaignId: string, headers?: RequestHeaders): Promise<GeoFence[]> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "GET",
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         throw new Error('Failed to retrieve geo fences', { cause: await response.text() });
@@ -57,10 +57,10 @@ export async function getGeoFences(orgid: string, campaignId: string): Promise<G
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function addGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[]): Promise<GeoFence[]> {
+export async function addGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[], headers?: RequestHeaders): Promise<GeoFence[]> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "POST",
-        headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify({ geo_fences: geoFences })
     });
     if (!response.ok) {
@@ -69,10 +69,10 @@ export async function addGeoFences(orgid: string, campaignId: string, geoFences:
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function replaceGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[]): Promise<GeoFence[]> {
+export async function replaceGeoFences(orgid: string, campaignId: string, geoFences: GeoFenceParams[], headers?: RequestHeaders): Promise<GeoFence[]> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "PUT",
-        headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify({ geo_fences: geoFences })
     });
     if (!response.ok) {
@@ -81,10 +81,10 @@ export async function replaceGeoFences(orgid: string, campaignId: string, geoFen
     return response.json() as Promise<GeoFence[]>;
 }
 
-export async function updateGeoFence(orgid: string, campaignId: string, geoFenceId: number, updates: Partial<GeoFenceParams>): Promise<GeoFence> {
+export async function updateGeoFence(orgid: string, campaignId: string, geoFenceId: number, updates: Partial<GeoFenceParams>, headers?: RequestHeaders): Promise<GeoFence> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}/${geoFenceId}`, {
         method: "PUT",
-        headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify({ geo_fence: updates })
     });
     if (!response.ok) {
@@ -93,20 +93,20 @@ export async function updateGeoFence(orgid: string, campaignId: string, geoFence
     return response.json() as Promise<GeoFence>;
 }
 
-export async function deleteGeoFence(orgid: string, campaignId: string, geoFenceId: number): Promise<void> {
+export async function deleteGeoFence(orgid: string, campaignId: string, geoFenceId: number, headers?: RequestHeaders): Promise<void> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}/${geoFenceId}`, {
         method: "DELETE",
-        headers
+        headers: checkEnvApiKeys() || headers
     });
     if (!response.ok) {
         throw new Error('Failed to delete geo fence', { cause: await response.text() });
     }
 }
 
-export async function deleteMultipleGeoFences(orgid: string, campaignId: string, geoFenceIds: number[]): Promise<void> {
+export async function deleteMultipleGeoFences(orgid: string, campaignId: string, geoFenceIds: number[], headers?: RequestHeaders): Promise<void> {
     const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
         method: "DELETE",
-        headers,
+        headers: checkEnvApiKeys() || headers,
         body: JSON.stringify({ geo_fence_ids: geoFenceIds })
     });
     if (!response.ok) {
