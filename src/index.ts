@@ -31,10 +31,42 @@ import {
 import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence } from "./geo/geofence.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
+import {
+    type BudgetPlan,
+    type BudgetPlanRequest,
+    type BudgetPlanResponse,
+    type CampaignWithAvailableRollover,
+    type CampaignsWithRolloverResponse,
+    listBudgetPlans,
+    getBudgetPlan,
+    createBudgetPlan,
+    updateBudgetPlan,
+    deleteBudgetPlan,
+    rolloverBudgetPlanNext,
+    rolloverBudgetPlanEven,
+    rolloverBudgetPlanNew,
+    getCampaignsWithAvailableRollover,
+    rolloverCampaignNext,
+    rolloverCampaignEven
+} from "./budget-plans/budget-plans";
+import {
+    type CampaignStat,
+    type CampaignStatsResponse,
+    type CampaignStatsParams,
+    getCampaignStats,
+    getAllCampaignStats,
+    getCampaignStatsByCampaign,
+    getCampaignStatsByAd,
+    getSpecificCampaignStats,
+    getDailyCampaignStats,
+    getComprehensiveCampaignStats
+} from "./campaign-stats/campaign-stats";
 import type { BunFile } from "bun";
 import { RequestHeaders } from "./defaults.ts";
+
 const defaultApiConfigErrorMessage = 'Please ensure to set your app and user API keys via the config method or in a .env file';
-type Config = { appApiKey?: string; userApiKey?: string; orgId?: string, debug?: boolean };
+
+export type Config = { appApiKey?: string; userApiKey?: string; orgId?: string, debug?: boolean };
 
 
 export class SimplifiClient {
@@ -201,6 +233,110 @@ export class SimplifiClient {
         return getSingleLandUse(params.landUseId, this.headers);
     }
 
+    // Budget Plans methods
+    public async listBudgetPlans(params: { campaignId: number }): Promise<BudgetPlanResponse> {
+        return listBudgetPlans(params.campaignId, this.headers);
+    }
 
-    // Add other methods for different API endpoints (e.g., ads, creative assets, etc.) here
+    public async getBudgetPlan(params: { budgetPlanId: number }): Promise<BudgetPlanResponse> {
+        return getBudgetPlan(params.budgetPlanId, this.headers);
+    }
+
+    public async createBudgetPlan(params: { campaignId: number; budgetPlan: BudgetPlanRequest }): Promise<BudgetPlanResponse> {
+        return createBudgetPlan(params.campaignId, params.budgetPlan, this.headers);
+    }
+
+    public async updateBudgetPlan(params: { budgetPlanId: number; budgetPlan: Partial<BudgetPlanRequest> }): Promise<BudgetPlanResponse> {
+        return updateBudgetPlan(params.budgetPlanId, params.budgetPlan, this.headers);
+    }
+
+    public async deleteBudgetPlan(params: { budgetPlanId: number }): Promise<void> {
+        return deleteBudgetPlan(params.budgetPlanId, this.headers);
+    }
+
+    public async rolloverBudgetPlanNext(params: { budgetPlanId: number }): Promise<BudgetPlanResponse> {
+        return rolloverBudgetPlanNext(params.budgetPlanId, this.headers);
+    }
+
+    public async rolloverBudgetPlanEven(params: { budgetPlanId: number }): Promise<BudgetPlanResponse> {
+        return rolloverBudgetPlanEven(params.budgetPlanId, this.headers);
+    }
+
+    public async rolloverBudgetPlanNew(params: { budgetPlanId: number }): Promise<BudgetPlanResponse> {
+        return rolloverBudgetPlanNew(params.budgetPlanId, this.headers);
+    }
+
+    public async getCampaignsWithAvailableRollover(params: { orgId?: string; includeChildren?: boolean }): Promise<CampaignsWithRolloverResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getCampaignsWithAvailableRollover(validOrgId, params.includeChildren, this.headers);
+    }
+
+    public async rolloverCampaignNext(params: { campaignId: number }): Promise<BudgetPlanResponse> {
+        return rolloverCampaignNext(params.campaignId, this.headers);
+    }
+
+    public async rolloverCampaignEven(params: { campaignId: number }): Promise<BudgetPlanResponse> {
+        return rolloverCampaignEven(params.campaignId, this.headers);
+    }
+
+    // Campaign Stats methods
+    public async getCampaignStats(params: { orgId?: string; statsParams?: CampaignStatsParams }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getCampaignStats(validOrgId, params.statsParams, this.headers);
+    }
+
+    public async getAllCampaignStats(params: { orgId?: string; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getAllCampaignStats(validOrgId, params.startDate, params.endDate, this.headers);
+    }
+
+    public async getCampaignStatsByCampaign(params: { orgId?: string; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getCampaignStatsByCampaign(validOrgId, params.startDate, params.endDate, this.headers);
+    }
+
+    public async getCampaignStatsByAd(params: { orgId?: string; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getCampaignStatsByAd(validOrgId, params.startDate, params.endDate, this.headers);
+    }
+
+    public async getSpecificCampaignStats(params: { orgId?: string; campaignId: number; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getSpecificCampaignStats(validOrgId, params.campaignId, params.startDate, params.endDate, this.headers);
+    }
+
+    public async getDailyCampaignStats(params: { orgId?: string; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getDailyCampaignStats(validOrgId, params.startDate, params.endDate, this.headers);
+    }
+
+    public async getComprehensiveCampaignStats(params: { orgId?: string; campaignId?: number; startDate?: string; endDate?: string }): Promise<CampaignStatsResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getComprehensiveCampaignStats(validOrgId, params.campaignId, params.startDate, params.endDate, this.headers);
+    }
 }
+
+// Export types for external use
+export type {
+    Config,
+    Campaign,
+    CampaignRequest,
+    CampaignResponse,
+    ListCampaignsParams,
+    Ad,
+    AdCreateParams,
+    AdUpdateParams,
+    BulkAdsResponse,
+    HtmlAd,
+    GeoFence,
+    GeoFenceParams,
+    LandUse,
+    BudgetPlan,
+    BudgetPlanRequest,
+    BudgetPlanResponse,
+    CampaignWithAvailableRollover,
+    CampaignsWithRolloverResponse,
+    CampaignStat,
+    CampaignStatsResponse,
+    CampaignStatsParams
+};

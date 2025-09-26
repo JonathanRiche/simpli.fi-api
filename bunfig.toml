@@ -1,0 +1,9 @@
+[test]
+# Test configuration for Bun
+coverage = true
+timeout = 30000
+preload = "./tests/setup.ts"
+
+# Environment-specific settings
+[install]
+cache = true
