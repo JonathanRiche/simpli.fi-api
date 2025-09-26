@@ -28,7 +28,8 @@ import {
     createAdWithFile
 } from "./ads/ads";
 // import { get, getSingleGeoTarget } from "./geo/geotarget.ts";
-import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence } from "./geo/geofence.ts";
+import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence, addConversionZones, getConversionZones, updateConversionZone, deleteConversionZone, type GeoConversionZone } from "./geo/geofence.ts";
+import { getStoreVisitAttribution, getStoreConversionMetrics, setAttributionConfig, getAttributionConfig, type StoreVisitAttributionResponse, type StoreConversionMetrics, type StoreAttributionConfig, type StoreAttributionConfigParams } from "./geo/geo-attribution.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
 import {
@@ -226,6 +227,42 @@ export class SimplifiClient {
         return replaceGeoFences(validOrgId, params.campaignId.toString(), params.geoFences, this.headers);
     }
 
+    // Geo-conversion zone methods
+    public async addConversionZones(params: { orgId?: string; campaignId: number; conversionZones: GeoFenceParams[] }): Promise<GeoConversionZone[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return addConversionZones(validOrgId, params.campaignId.toString(), params.conversionZones, this.headers);
+    }
+    public async getConversionZones(params: { orgId?: string; campaignId: number }): Promise<GeoConversionZone[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getConversionZones(validOrgId, params.campaignId.toString(), this.headers);
+    }
+    public async updateConversionZone(params: { orgId?: string; campaignId: number; zoneId: number; updates: Partial<GeoFenceParams> }): Promise<GeoConversionZone> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return updateConversionZone(validOrgId, params.campaignId.toString(), params.zoneId, params.updates, this.headers);
+    }
+    public async deleteConversionZone(params: { orgId?: string; campaignId: number; zoneId: number }): Promise<void> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return deleteConversionZone(validOrgId, params.campaignId.toString(), params.zoneId, this.headers);
+    }
+
+    // Store visit attribution methods
+    public async getStoreVisitAttribution(params: { orgId?: string; campaignId: number; startDate: string; endDate: string }): Promise<StoreVisitAttributionResponse> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getStoreVisitAttribution(validOrgId, params.campaignId.toString(), params.startDate, params.endDate, this.headers);
+    }
+    public async getStoreConversionMetrics(params: { orgId?: string; campaignId: number; storeIds?: number[] }): Promise<StoreConversionMetrics[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getStoreConversionMetrics(validOrgId, params.campaignId.toString(), params.storeIds, this.headers);
+    }
+    public async setAttributionConfig(params: { orgId?: string; campaignId: number; config: StoreAttributionConfigParams }): Promise<StoreAttributionConfig> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return setAttributionConfig(validOrgId, params.campaignId.toString(), params.config, this.headers);
+    }
+    public async getAttributionConfig(params: { orgId?: string; campaignId: number }): Promise<StoreAttributionConfig> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getAttributionConfig(validOrgId, params.campaignId.toString(), this.headers);
+    }
+
     public async getAllLandUses(params: { orgId?: string }): Promise<LandUse[]> {
         return getAllLandUses(this.headers);
     }
@@ -318,7 +355,6 @@ export class SimplifiClient {
 
 // Export types for external use
 export type {
-    Config,
     Campaign,
     CampaignRequest,
     CampaignResponse,
@@ -330,6 +366,7 @@ export type {
     HtmlAd,
     GeoFence,
     GeoFenceParams,
+    GeoConversionZone,
     LandUse,
     BudgetPlan,
     BudgetPlanRequest,
@@ -338,5 +375,9 @@ export type {
     CampaignsWithRolloverResponse,
     CampaignStat,
     CampaignStatsResponse,
-    CampaignStatsParams
+    CampaignStatsParams,
+    StoreVisitAttributionResponse,
+    StoreConversionMetrics,
+    StoreAttributionConfig,
+    StoreAttributionConfigParams
 };
