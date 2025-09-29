@@ -1,4 +1,4 @@
-import type { Campaign, CampaignRequest, Ad, BudgetPlan, GeoFence, GeoConversionZone } from "../../src/index";
+import type { Campaign, CampaignRequest, Ad, BudgetPlan, GeoFence } from "../../src/index";
 
 // Mock data generators
 export const createMockCampaign = (overrides: Partial<Campaign> = {}): Campaign => ({
@@ -63,24 +63,6 @@ export const createMockGeoFence = (overrides: Partial<GeoFence> = {}): GeoFence 
   radius: 1000,
   radius_unit: "mi",
   resource: "https://api.simpli.fi/geo_fences/11111",
-  geo_fence_type_name: "Target",
-  ...overrides,
-});
-
-export const createMockConversionZone = (overrides: Partial<GeoConversionZone> = {}): GeoConversionZone => ({
-  id: 22222,
-  name: "Test Conversion Zone",
-  latitude: 41.8781,
-  longitude: -87.6298,
-  radius: 0.5,
-  radius_unit: "mi",
-  resource: "https://api.simpli.fi/geo_fences/22222",
-  geo_fence_type_name: "Conversion",
-  attribution_window_days: 30,
-  store_address: "123 Main St, Chicago, IL 60601",
-  status: "active",
-  created_at: "2024-01-01T00:00:00Z",
-  updated_at: "2024-01-01T00:00:00Z",
   ...overrides,
 });
 

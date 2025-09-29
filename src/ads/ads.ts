@@ -228,15 +228,21 @@ export async function createAdWithFile(
     if (debug) console.log(formData);
     const reqHeaders = checkEnvApiKeys() || headers;
     if (!reqHeaders) throw new Error("Headers not set");
-    reqHeaders["Content-Type"] = 'multipart/form-data';
-    const response = await fetch(`${adEndpoint(orgid, campaignId)}`, {
+    // Remove Content-Type to let fetch set it automatically with boundary
+    const { "Content-Type": _, ...headersWithoutContentType } = reqHeaders;
+    const url = adEndpoint(orgid, campaignId);
+    if (debug) console.log('Request URL:', url);
+    const response = await fetch(url, {
         method: "POST",
-        headers: reqHeaders,
+        headers: headersWithoutContentType,
         body: formData
     });
 
     if (!response.ok) {
         const textResponse = await response.text();
+        console.log('API Error Response:', textResponse);
+        console.log('Response Status:', response.status);
+        console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
         throw new Error('Failed to create ad with file', { cause: textResponse });
     }
     return response.json() as Promise<Ad>;

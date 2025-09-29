@@ -19,16 +19,6 @@ export interface GeoFence {
     longitude: number;
     radius: number;
     radius_unit: 'mi' | 'km';
-    geo_fence_type_name?: 'Target' | 'Conversion';
-}
-
-export interface GeoConversionZone extends GeoFence {
-    geo_fence_type_name: 'Conversion';
-    attribution_window_days: number;
-    store_address?: string;
-    status: 'active' | 'inactive';
-    created_at: string;
-    updated_at: string;
 }
 
 export type Coordinate = [number, number];
@@ -46,9 +36,8 @@ export type GeoFenceParams = {
         coordinates: Coordinate[][];
 
     };
-    geo_fence_type_name?: 'Target' | 'Conversion';
-    attribution_window_days?: number;
-    store_address?: string;
+    geo_fence_source_id?: number;
+    geo_fence_type_name: "Conversion" | "Target";
 };
 
 export interface GeoFenceCreateParams {
@@ -124,58 +113,5 @@ export async function deleteMultipleGeoFences(orgid: string, campaignId: string,
     });
     if (!response.ok) {
         throw new Error('Failed to delete multiple geo fences', { cause: await response.text() });
-    }
-}
-
-// Geo-conversion zone methods
-export async function addConversionZones(orgid: string, campaignId: string, conversionZones: GeoFenceParams[], headers?: RequestHeaders): Promise<GeoConversionZone[]> {
-    const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
-        method: "POST",
-        headers: checkEnvApiKeys() || headers,
-        body: JSON.stringify({ 
-            geo_fences: conversionZones,
-            geo_fencing_update_type: "Conversion"
-        })
-    });
-    if (!response.ok) {
-        throw new Error('Failed to add conversion zones', { cause: await response.text() });
-    }
-    return response.json() as Promise<GeoConversionZone[]>;
-}
-
-export async function getConversionZones(orgid: string, campaignId: string, headers?: RequestHeaders): Promise<GeoConversionZone[]> {
-    const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}`, {
-        method: "GET",
-        headers: checkEnvApiKeys() || headers
-    });
-    if (!response.ok) {
-        throw new Error('Failed to retrieve conversion zones', { cause: await response.text() });
-    }
-    const allZones = await response.json() as Promise<GeoFence[]>;
-    return (await allZones).filter(zone => zone.geo_fence_type_name === 'Conversion') as GeoConversionZone[];
-}
-
-export async function updateConversionZone(orgid: string, campaignId: string, zoneId: number, updates: Partial<GeoFenceParams>, headers?: RequestHeaders): Promise<GeoConversionZone> {
-    const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}/${zoneId}`, {
-        method: "PUT",
-        headers: checkEnvApiKeys() || headers,
-        body: JSON.stringify({ 
-            geo_fence: updates,
-            geo_fencing_update_type: "Conversion"
-        })
-    });
-    if (!response.ok) {
-        throw new Error('Failed to update conversion zone', { cause: await response.text() });
-    }
-    return response.json() as Promise<GeoConversionZone>;
-}
-
-export async function deleteConversionZone(orgid: string, campaignId: string, zoneId: number, headers?: RequestHeaders): Promise<void> {
-    const response = await fetch(`${geofenceEndpoint(orgid, campaignId)}/${zoneId}`, {
-        method: "DELETE",
-        headers: checkEnvApiKeys() || headers
-    });
-    if (!response.ok) {
-        throw new Error('Failed to delete conversion zone', { cause: await response.text() });
     }
 }
