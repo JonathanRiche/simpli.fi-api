@@ -85,10 +85,15 @@ export interface RadiusGeoTargetParams {
 }
 
 export async function queryGeoTargetsByRadius(params: RadiusGeoTargetParams, headers: RequestHeaders): Promise<GeoTarget[]> {
-    const response = await fetch(`${BaseAPIURL}geo_targets/for_radius`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(params)
+    const queryParams = new URLSearchParams({
+        latitude: params.latitude.toString(),
+        longitude: params.longitude.toString(),
+        radius: params.radius.toString()
+    });
+    
+    const response = await fetch(`${BaseAPIURL}geo_targets/for_radius?${queryParams.toString()}`, {
+        method: "GET",
+        headers
     });
     if (!response.ok) {
         throw new Error('Failed to query geo targets by radius', { cause: await response.text() });
