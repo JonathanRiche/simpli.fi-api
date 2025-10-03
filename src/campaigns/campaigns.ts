@@ -87,6 +87,8 @@ export type CampaignRequest = {
     }[];
     /** List of geo targets (optional). */
     geo_targets?: string[];
+    /** List of geo target IDS numbers (optional). */
+    geo_target_ids?: string[];
     /** List of third-party segments (optional). */
     third_party_segments?: number[];
     /** List of first-party segments (optional). */
