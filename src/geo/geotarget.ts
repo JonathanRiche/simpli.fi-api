@@ -86,7 +86,7 @@ export interface RadiusGeoTargetParams {
 
 export async function queryGeoTargetsByRadius(params: RadiusGeoTargetParams, headers: RequestHeaders): Promise<GeoTarget[]> {
     const response = await fetch(`${BaseAPIURL}geo_targets/for_radius`, {
-        method: "GET",
+        method: "POST",
         headers,
         body: JSON.stringify(params)
     });
