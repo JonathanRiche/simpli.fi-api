@@ -39,7 +39,17 @@ import {
     updateEventTarget,
     deleteEventTarget
 } from "./events/event_targets";
-// import { get, getSingleGeoTarget } from "./geo/geotarget.ts";
+import { 
+    type GeoTarget,
+    type GeoTargetQueryParams,
+    type GeoTargetResponse,
+    type RadiusGeoTargetParams,
+    getTopLevelGeoTargets,
+    queryGeoTargets,
+    getCampaignGeoTargets,
+    addGeoTargetsToCampaign,
+    queryGeoTargetsByRadius
+} from "./geo/geotarget";
 import { addGeoFences, getGeoFences, deleteGeoFence, updateGeoFence, replaceGeoFences, type GeoFenceParams, type GeoFence } from "./geo/geofence.ts";
 
 import { LandUse, getAllLandUses, getSingleLandUse } from "./geo/landuses";
@@ -348,6 +358,27 @@ export class SimplifiClient {
         const validOrgId = this.validateConfig(params.orgId);
         return getComprehensiveCampaignStats(validOrgId, params.campaignId, params.startDate, params.endDate, this.headers);
     }
+
+    public async getTopLevelGeoTargets(): Promise<GeoTarget[]> {
+        return getTopLevelGeoTargets(this.headers);
+    }
+
+    public async queryGeoTargets(params: GeoTargetQueryParams): Promise<GeoTarget[]> {
+        return queryGeoTargets(params, this.headers);
+    }
+
+    public async getCampaignGeoTargets(params: { orgId?: string; campaignId: number }): Promise<GeoTarget[]> {
+        const validOrgId = this.validateConfig(params.orgId);
+        return getCampaignGeoTargets(validOrgId, params.campaignId.toString(), this.headers);
+    }
+
+    public async addGeoTargetsToCampaign(params: { campaignId: number; metroCodes: string[] }): Promise<GeoTarget[]> {
+        return addGeoTargetsToCampaign(params.campaignId.toString(), params.metroCodes, this.headers);
+    }
+
+    public async queryGeoTargetsByRadius(params: RadiusGeoTargetParams): Promise<GeoTarget[]> {
+        return queryGeoTargetsByRadius(params, this.headers);
+    }
 }
 
 // Export types for external use
@@ -363,6 +394,10 @@ export type {
     HtmlAd,
     GeoFence,
     GeoFenceParams,
+    GeoTarget,
+    GeoTargetQueryParams,
+    GeoTargetResponse,
+    RadiusGeoTargetParams,
     LandUse,
     BudgetPlan,
     BudgetPlanRequest,

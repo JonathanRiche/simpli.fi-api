@@ -1,4 +1,5 @@
 export const BaseURL = `https://app.simpli.fi/api/organizations/` as const;
+export const BaseAPIURL = `https://app.simpli.fi/api/` as const;
 
 export type RequestHeaders = {
     "X-App-Key": string,
